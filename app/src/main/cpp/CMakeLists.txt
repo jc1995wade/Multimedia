@@ -21,7 +21,9 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             native-lib.cpp )
+             native-lib.cpp
+             openSLES.c)
+
 #target_include_directories(native-lib INTERFACE libs/include)
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -90,7 +92,12 @@ set_target_properties(avfilter-7
         PROPERTIES IMPORTED_LOCATION
         ${DIR}/x86/libavfilter-7.so)
 
-
+add_library(OpenSLES
+        SHARED
+        IMPORTED)
+set_target_properties(OpenSLES
+        PROPERTIES IMPORTED_LOCATION
+        ${DIR}/x86/libOpenSLES.so)
 
 target_link_libraries( native-lib
         avfilter-7
@@ -101,4 +108,8 @@ target_link_libraries( native-lib
         postproc-55
         swresample-3
         swscale-5
+        OpenSLES
+        android
         ${log-lib})
+
+

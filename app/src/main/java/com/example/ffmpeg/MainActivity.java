@@ -3,7 +3,9 @@ package com.example.ffmpeg;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+import android.content.res.AssetManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,16 +14,20 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
+    private static String TAG = "ffmpeg-app";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Example of a call to a native method
+        // Example of a avcodec test
         TextView tv = findViewById(R.id.sample_text);
-
-        tv.setText(avcodecConfiguration());
+        Log.d(TAG, "this is avcodecConfiguration:"+avcodecConfiguration());
         tv.setText("Avcodec Version:"+avcodecVersion());
+
+        // Example of use openSLES play mp3 on asset
+        AssetManager asset= getAssets();
+        playAudioByOpenSL(asset, "许巍 - 旅行.mp3");
     }
 
     /**
@@ -30,4 +36,5 @@ public class MainActivity extends AppCompatActivity {
      */
     public native String avcodecConfiguration();
     public native int avcodecVersion();
+    public native int playAudioByOpenSL(Object assetManager, String filename);
 }
