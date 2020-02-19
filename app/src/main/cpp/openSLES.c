@@ -1,14 +1,12 @@
 #include <jni.h>
-
 #include <sys/types.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
-
 #include "SLES/OpenSLES.h"
 #include "SLES/OpenSLES_Android.h"
 #include  <android/log.h>
-#define  TAG    "openSLES"
 
+#define  TAG    "openSLES"
 // 定义info信息
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,TAG,__VA_ARGS__)
 // 定义debug信息
@@ -41,10 +39,12 @@ void createEngine()
     (void)result;
 }
 
-
 JNIEXPORT void JNICALL
-Java_com_example_ffmpeg_MainActivity_playAudioByOpenSL(JNIEnv *env, jobject instance, jobject assetManager, jstring filename) {
-
+Java_com_example_ffmpeg_MainActivity_initAudioByOpenSL(
+        JNIEnv *env,
+        jobject instance,
+        jobject assetManager,
+        jstring filename) {
     //release();
     const char *utf8 = (*env)->GetStringUTFChars(env, filename, NULL);
     LOGD("filename=%s", utf8);
@@ -86,7 +86,7 @@ Java_com_example_ffmpeg_MainActivity_playAudioByOpenSL(JNIEnv *env, jobject inst
 
     // 创建播放器
     const SLInterfaceID ids[3] = {SL_IID_SEEK, SL_IID_MUTESOLO, SL_IID_VOLUME};
-    const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
+     const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
     result = (*engineEngine)->CreateAudioPlayer(engineEngine, &playerObject, &audioSrc, &audioSnk, 3, ids, req);
     (void)result;
 
@@ -102,12 +102,48 @@ Java_com_example_ffmpeg_MainActivity_playAudioByOpenSL(JNIEnv *env, jobject inst
     result = (*playerObject)->GetInterface(playerObject, SL_IID_VOLUME, &playerVolume);
     (void)result;
 
-    //第四步，设置播放状态
-    if (NULL != playerPlay) {
-        result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
-        (void)result;
-    }
     LOGD("设置播放音量");
     //设置播放音量 （100 * -50：静音 ）
     (*playerVolume)->SetVolumeLevel(playerVolume, 20 * -50);
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_ffmpeg_MainActivity_playAudioByOpenSL(
+        JNIEnv *env,
+        jobject instance) {
+    SLresult result;
+
+    //设置播放状态
+    if (NULL != playerPlay) {
+        result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
+        LOGD("Stop result=%d", result);
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_ffmpeg_MainActivity_pauseAudioByOpenSL(
+        JNIEnv *env,
+        jobject instance) {
+    SLresult result;
+
+    //设置播放状态
+    if (NULL != playerPlay) {
+        result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PAUSED);
+        (void)result;
+        LOGD("Stop result=%d", result);
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_ffmpeg_MainActivity_stopAudioByOpenSL(
+        JNIEnv *env,
+        jobject instance) {
+    SLresult result;
+
+    //设置播放状态
+    if (NULL != playerPlay) {
+        result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
+        (void)result;
+        LOGD("Stop result=%d", result);
+    }
 }
