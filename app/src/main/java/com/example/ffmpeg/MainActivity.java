@@ -33,14 +33,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btStop.setOnClickListener(this);
 
         // Example of use openSLES play mp3 on asset
-        AssetManager asset= getAssets();
-        initAudioByOpenSL(asset, "许巍 - 旅行.mp3");
+        //AssetManager asset= getAssets();
+        //initAudioByOpenSL(asset, "许巍 - 旅行.mp3");
 
         // Example of a avcodec test
         TextView tv = findViewById(R.id.sample_text);
         Log.d(TAG, "this is avcodecConfiguration:"+avcodecConfiguration());
         tv.setText("Avcodec Version:"+avcodecVersion());
-
+        //fftTest();
+        AssetManager fasset= getAssets();
+        readFileData(fasset, "one_sample_44k.pcm");
     }
 
     //重写onClick()方法
@@ -72,4 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public native int playAudioByOpenSL();
     public native void pauseAudioByOpenSL();
     public native void stopAudioByOpenSL();
+
+    public native int fftTest();
+    public native void readFileData(Object assetManager, String filename);
 }

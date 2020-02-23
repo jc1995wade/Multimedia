@@ -22,7 +22,10 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              native-lib.cpp
-             openSLES.c)
+             fft_api.cpp
+             Mayer_FFT.c
+             openSLES.c
+             wav/wav.c)
 
 #target_include_directories(native-lib INTERFACE libs/include)
 # Searches for a specified prebuilt library and stores the path as a

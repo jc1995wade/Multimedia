@@ -39,13 +39,30 @@ void createEngine()
     (void)result;
 }
 
+void release()
+{
+    if (NULL != outputMixObject){
+        (*outputMixObject)->Destroy(outputMixObject);
+        outputMixObject = NULL;
+    }
+    if (NULL != playerObject){
+        (*playerObject)->Destroy(playerObject);
+        playerObject = NULL;
+    }
+    if (NULL != engineObject){
+        (*engineObject)->Destroy(engineObject);
+        engineObject = NULL;
+    }
+    LOGD("release");
+}
+
 JNIEXPORT void JNICALL
 Java_com_example_ffmpeg_MainActivity_initAudioByOpenSL(
         JNIEnv *env,
         jobject instance,
         jobject assetManager,
         jstring filename) {
-    //release();
+    release();
     const char *utf8 = (*env)->GetStringUTFChars(env, filename, NULL);
     LOGD("filename=%s", utf8);
     // use asset manager to open asset by filename
@@ -116,7 +133,7 @@ Java_com_example_ffmpeg_MainActivity_playAudioByOpenSL(
     //设置播放状态
     if (NULL != playerPlay) {
         result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
-        LOGD("Stop result=%d", result);
+        LOGD("Stop result=%d", (int)result);
     }
 }
 
@@ -130,7 +147,7 @@ Java_com_example_ffmpeg_MainActivity_pauseAudioByOpenSL(
     if (NULL != playerPlay) {
         result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PAUSED);
         (void)result;
-        LOGD("Stop result=%d", result);
+        LOGD("Stop result=%d", (int)result);
     }
 }
 
@@ -144,6 +161,7 @@ Java_com_example_ffmpeg_MainActivity_stopAudioByOpenSL(
     if (NULL != playerPlay) {
         result = (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
         (void)result;
-        LOGD("Stop result=%d", result);
+        LOGD("Stop result=%d", (int)result);
     }
 }
+
