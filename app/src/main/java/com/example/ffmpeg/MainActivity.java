@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv.setText("Avcodec Version:"+avcodecVersion());
         //fftTest();
         AssetManager fasset= getAssets();
-        readFileData(fasset, "one_sample_44k.pcm");
+        //readFileData(fasset, "one_sample_44k.pcm");
+        testFftw3Fourier(fasset, "one_sample_44k.pcm");
     }
 
     //重写onClick()方法
@@ -77,4 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public native int fftTest();
     public native void readFileData(Object assetManager, String filename);
+
+    public native void testFftw3Fourier(Object assetManager, String filename);
 }

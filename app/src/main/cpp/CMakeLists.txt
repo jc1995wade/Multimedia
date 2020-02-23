@@ -25,7 +25,8 @@ add_library( # Sets the name of the library.
              fft_api.cpp
              Mayer_FFT.c
              openSLES.c
-             wav/wav.c)
+             wav/wav.c
+             fftw3/fftw3_jni.c)
 
 #target_include_directories(native-lib INTERFACE libs/include)
 # Searches for a specified prebuilt library and stores the path as a
@@ -102,6 +103,13 @@ set_target_properties(OpenSLES
         PROPERTIES IMPORTED_LOCATION
         ${DIR}/x86/libOpenSLES.so)
 
+add_library(fftw3f
+        SHARED
+        IMPORTED)
+set_target_properties(fftw3f
+        PROPERTIES IMPORTED_LOCATION
+        ${DIR}/x86/libfftw3f.so)
+
 target_link_libraries( native-lib
         avfilter-7
         avcodec-58
@@ -112,6 +120,7 @@ target_link_libraries( native-lib
         swresample-3
         swscale-5
         OpenSLES
+        fftw3f
         android
         ${log-lib})
 
