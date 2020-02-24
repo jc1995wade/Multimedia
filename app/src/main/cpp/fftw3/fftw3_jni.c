@@ -21,7 +21,9 @@ Java_com_example_ffmpeg_MainActivity_testFftw3Fourier (
         JNIEnv * env,
         jobject instance,
         jobject assetManager,
-        jstring filename) {
+        jstring filename,
+        jfloatArray * javaArray,
+        jint  num) {
     const char *utf8 = (*env)->GetStringUTFChars(env, filename, NULL);
     LOGD("filename=%s", utf8);
     // use asset manager to open asset by filename
@@ -31,7 +33,7 @@ Java_com_example_ffmpeg_MainActivity_testFftw3Fourier (
 
     AAsset_seek(asset,0,SEEK_SET);
 
-    unsigned int N = 8192;  // 441000/8192 = 5.3833Hz
+    unsigned int N = num;   // 441000/8192 = 5.3833Hz
                             // 82*5.3833Hz = 441.43Hz
     fftwf_complex *in, *out;  // float[i][0] float[i][1]
     fftwf_plan p;
@@ -47,27 +49,34 @@ Java_com_example_ffmpeg_MainActivity_testFftw3Fourier (
         in[i][1] = 0;
         //LOGD("%f%+fi\n", in[i][0], in[i][1]);
     }
-
     p = fftwf_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
     fftwf_execute(p); /* repeat as needed */
 
+    float *farray = (float *)malloc(sizeof(float)*N/2);
+    (*env)->GetFloatArrayRegion(env,javaArray, 0, N/2, farray);
+
     // 输出幅度谱
-    float lent, maxlent = 0;
-    int n = 0;
+    float max_val = 0;
+    int max_position = 0;
     for(int i = 0; i < N/2; i++)
     {
-        lent = sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
-        if (maxlent < lent) {  // 记录最大幅度值
-            maxlent = lent;
-            n = i;
+        farray[i] = sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
+        if (max_val < farray[i]) {  // 记录最大幅度值
+            max_val = farray[i];
+            max_position = i;
         }
         //LOGD("len=%d, lent=%.2f ",i, lent);
         //usleep(1000*2);
     }
-    LOGD("Freq=%d  Amplitude=%f",n, maxlent);
+    LOGD("Freq=%d  Amplitude=%f",max_position, max_val);
+
+    //写回数据到java
+    //参数1：待赋值数组；参数2：赋值起始位置；参数3：赋值长度；参数4：数据源
+    (*env)->SetFloatArrayRegion(env,javaArray,0, N/2, farray);
 
     fftwf_destroy_plan(p);
     fftwf_free(in);
     fftwf_free(out);
     AAsset_close(asset);
+    free(farray);
 }
