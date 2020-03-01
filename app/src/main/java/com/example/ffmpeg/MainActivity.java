@@ -80,7 +80,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             stopAudioByOpenSL();
         }
         else if(v.getId()==R.id.bt_add_data){
-
+            SoundThread sThread = new SoundThread();
+            //检测读写权限
+            PermisionUtils.verifyStoragePermissions(this);
+            sThread.start();
         }
         else if(v.getId()==R.id.bt_update){
             initBarChart();
@@ -139,9 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public native int playAudioByOpenSL();
     public native void pauseAudioByOpenSL();
     public native void stopAudioByOpenSL();
-
     public native int fftTest();
     public native void readFileData(Object assetManager, String filename);
-
     public native void testFftw3Fourier(Object assetManager, String filename, float[] javaArray, int num);
 }
